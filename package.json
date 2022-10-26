@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "TS_NODE_FILES=true ts-node-dev src/index.ts",
+    "dev": "TS_NODE_FILES=true ts-node-dev --poll --respawn --transpile-only --no-deps --exit-child ./src/index.ts",
     "start": "node dist/",
     "build": "tsc -p tsconfig.json",
     "test": "tsc -p tsconfig.json --noEmit"

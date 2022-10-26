@@ -23,7 +23,7 @@ export const generateAuthUrl = (): string =>
   })
 
 // @ts-ignore
-export const isOAuthStateMatch = (state: string): boolean => true //state === oAuthState
+export const isOAuthStateMatch = (state: string): boolean => state === oAuthState
 
 export const authorizeClient = async (code: string): Promise<void> => {
   const {
@@ -32,8 +32,4 @@ export const authorizeClient = async (code: string): Promise<void> => {
 
   oAuth2Client.setCredentials({ access_token })
   google.options({ auth: oAuth2Client })
-}
-
-export const getCalendarClient = (): ReturnType<typeof google.calendar> => {
-  return google.calendar({ version: "v3" })
 }

@@ -1,4 +1,11 @@
-type Event = unknown
+import { calendar_v3 as googleCalendarApi } from "googleapis"
+
+type Event = googleCalendarApi.Schema$Events
+
+type EventAction = {
+  timestamp: string
+  events: Event[]
+}
 
 /**
  * Status of the event. Optional. Possible values are:
@@ -12,14 +19,21 @@ type Event = unknown
  * Deleted events are only guaranteed to have the id field populated.   On the organizer's calendar, cancelled events continue to expose event details (summary, location, etc.) so that they can be restored (undeleted). Similarly, the events to which the user was invited and that they manually removed continue to provide details. However, incremental sync requests with showDeleted set to false will not return these details.
  * If an event changes its organizer (for example via the move operation) and the original organizer is not on the attendee list, it will leave behind a cancelled event where only the id field is guaranteed to be populated.
  */
-const EVENTS: Event[] = []
+const EVENTS: EventAction[] = []
 
 export const addEvents = (events: Event[]): Promise<void> => {
-  EVENTS.push(events)
+  if (events.length > 0) {
+    const now = new Date()
+    EVENTS.push({
+      timestamp: `${now.toTimeString()} | ${now.toDateString()}`,
+      events,
+    })
+  }
+
   return Promise.resolve()
 }
 
-export const getEvents = (): Promise<Event[]> => Promise.resolve(EVENTS)
+export const getEvents = (): Promise<EventAction[]> => Promise.resolve(EVENTS)
 
 export const clearEvents = (): Promise<void> => {
   EVENTS.length = 0

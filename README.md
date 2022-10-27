@@ -3,6 +3,26 @@
 This repository contains sample integration with google calendar events webhooks, which you can run
 fully locally.
 
+- [How it works?](#how-it-works)
+- [Specs for Google Calendar Events webhook](#specs-for-google-calendar-events-webhook)
+  - [Webhook creation](#webhook-creation)
+    - [Request to googleapis.com](#request-to-googleapiscom)
+    - [Webhook expiration](#webhook-expiration)
+    - [Response from googleapis.com](#response-from-googleapiscom)
+  - [Webhook callback](#webhook-callback)
+    - [Request to `~/webhook` send by Google API](#request-to-webhook-send-by-google-api)
+    - [Response from `~/webhook` to Google API](#response-from-webhook-to-google-api)
+  - [Fetching recent changed events](#fetching-recent-changed-events)
+  - [Limits](#limits)
+- [Run it](#run-it)
+  - [Prerequisites](#prerequisites)
+    - [You have Node & npm installed](#you-have-node--npm-installed)
+    - [You have Google Cloud account](#you-have-google-cloud-account)
+  - [Run the app](#run-the-app)
+  - [Play with the calendar](#play-with-the-calendar)
+  - [Everything is in memory](#everything-is-in-memory)
+  - [Tips](#tips)
+
 ## How it works?
 
 Check the below video, it contains walk through running example 😊
@@ -24,7 +44,7 @@ Still, a few things done there are worth mentioning:
 
 - f.e. `POST https://www.googleapis.com/calendar/v3/calendars/my_calendar@gmail.com/events/watch`
 
-#### :inbox_tray: Request to googleapis.com/calendar/v3/calendars/{calendar-id}/events/watch
+#### Request to googleapis.com
 
 While registering webhook, the client is responsible for creating channel id (`id`) and channel
 token `token`
@@ -43,11 +63,11 @@ token `token`
 - `address` is the webhook callback URL. When this doc mentions _webhook callback_ it means this
   very app URL which is called by Google if there is a new notification
 
-#### :clock10: Webhook expiration
+#### Webhook expiration
 
 Channels are not automatically re-created, they have to be recreated manually when expired.
 
-#### :outbox_tray: Response from googleapis.com/calendar/v3/calendars/{calendar-id}/events/watch
+#### Response from googleapis.com
 
 Response mainly echoes what was sent. Important - it sends back the `expiration` as the timestamp.
 
@@ -91,7 +111,7 @@ expose localhost by an auto-generated subdomain of loca.lt. Example of webhook c
 registered to Google Calendar API by this app:
 `https://mean-wolves-invent-93-174-30-12.loca.lt/webhook`
 
-#### :inbox_tray: Request to `~/webhook` send by Google API
+#### Request to `~/webhook` send by Google API
 
 The request (from Google API) to the webhook callback **doesn't contain any information about what
 has changed in the event(s)**, it only indicates that there was a change on a watched resource.
@@ -163,7 +183,7 @@ headers: {
 }
 ```
 
-#### :outbox_tray: Response from `~/webhook` to Google API
+#### Response from `~/webhook` to Google API
 
 The status of the response send by webhook callback is a crucial part of the contract.
 
@@ -171,14 +191,14 @@ The status of the response send by webhook callback is a crucial part of the con
 - `500`, `502`, `503`, `504` - request will be retried with exponential backoff
 - any other status code - the message is a failure, won't be retried
 
-### :cloud: Fetching recent changed events
+### Fetching recent changed events
 
 Since the webhook callback request doesn't contain information about what has changed, we have to
 fetch events on our own. There is `updatedMin` param for
 [Events List endpoint at Google Calendar API](https://developers.google.com/calendar/api/v3/reference/events/list)
 which gives us all events which were updated since the given time.
 
-### :end: Limits
+### Limits
 
 Google Cloud doesn't specify any limits for the number of registered webhooks. Requests for
 registration (/watch) are counted for the whole `Google Calendar API` quota.

@@ -89,7 +89,7 @@ App URL which is called by Google if there is a new notification. F.e. example:
 This example app uses [localtunnel](https://github.com/localtunnel/localtunnel) to temporarily
 expose localhost by an auto-generated subdomain of loca.lt. Example of webhook callback which was
 registered to Google Calendar API by this app:
-`https://poor-rabbits-count-93-174-30-12.loca.lt/webhook`
+`https://mean-wolves-invent-93-174-30-12.loca.lt/webhook`
 
 #### :inbox_tray: Request to `~/webhook` send by Google API
 
@@ -108,6 +108,60 @@ Most important ones:
   information. Further requests will be `exists` or `not_exists`. `not_exists` sounds like it should
   be sent when resource to which we subscribe is deleted, but I didn't manage to get this state when
   I removed the calendar.
+
+Example request for `sync`
+
+```json
+body: <empty>
+headers: {
+   "accept-encoding": "gzip, deflate, br",
+   "user-agent": "APIs-Google; (+https://developers.google.com/webmasters/APIs-Google.html)",
+   "x-goog-channel-token": "channel=all_events",
+   "x-goog-resource-uri": "https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json",
+   "x-goog-resource-id": "8pNgdSzwS_emx0WZgp30VdgdstE",
+   "x-goog-message-number": "1",
+   "x-goog-resource-state": "sync",
+   "x-goog-channel-expiration": "Thu, 03 Nov 2022 12:41:23 GMT",
+   "x-goog-channel-id": "d1f846c0-730c-4854-860d-b1abfdf8518d",
+   "accept": "*/*",
+   "content-length": "0",
+   "x-forwarded-port": "443",
+   "x-forwarded-ssl": "on",
+   "x-forwarded-proto": "https",
+   "x-forwarded-for": "74.125.210.38",
+   "x-real-ip": "74.125.210.38",
+   "connection": "close",
+   "host": "mean-wolves-invent-93-174-30-12.loca.lt",
+   "x-forwarded-host": "mean-wolves-invent-93-174-30-12.loca.lt"
+}
+```
+
+Example request for `exists`
+
+```json
+body: <empty>
+headers: {
+   "accept-encoding": "gzip, deflate, br",
+   "user-agent": "APIs-Google; (+https://developers.google.com/webmasters/APIs-Google.html)",
+   "x-goog-channel-token": "channel=all_events",
+   "x-goog-resource-uri": "https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json",
+   "x-goog-resource-id": "8pNgdSzwS_emx0WZgp30VdgdstE",
+   "x-goog-message-number": "100566",
+   "x-goog-resource-state": "exists",
+   "x-goog-channel-expiration": "Thu, 03 Nov 2022 12:41:23 GMT",
+   "x-goog-channel-id": "d1f846c0-730c-4854-860d-b1abfdf8518d",
+   "accept": "*/*",
+   "content-length": "0",
+   "x-forwarded-port": "443",
+   "x-forwarded-ssl": "on",
+   "x-forwarded-proto": "https",
+   "x-forwarded-for": "74.125.210.38",
+   "x-real-ip": "74.125.210.38",
+   "connection": "close",
+   "host": "mean-wolves-invent-93-174-30-12.loca.lt",
+   "x-forwarded-host": "mean-wolves-invent-93-174-30-12.loca.lt"
+}
+```
 
 #### :outbox_tray: Response from `~/webhook` to Google API
 

@@ -47,9 +47,7 @@ server.get<{
 
   return reply.send(200)
 })
-// TODO MM: check how recurring events behave
-// recurring events are not in list, more info https://developers.google.com/calendar/api/guides/recurringevents
-// https://developers.google.com/calendar/api/guides/push#receiving-notifications
+
 server.post<{
   Headers: {
     "x-goog-channel-id": string
@@ -57,7 +55,6 @@ server.post<{
     "x-goog-resource-id": string
     "x-goog-resource-state": "sync" | "exists" | "not_exists"
     "x-goog-resource-uri": string
-    // TODO MM: log channel expiration date. Channels are not automatically re-created, they have to be recreated manually!
     "x-goog-channel-expiration"?: string
     "x-goog-channel-token": string
   }
@@ -80,11 +77,6 @@ server.post<{
     logger.debug({ resourceState, channelToken }, "Webhook was synced")
     return reply.status(200).send()
   }
-
-  // TODO MM: What are limits for webhooks?
-  // TODO MM: Describe how responces work and how they are interpreted by google.
-  //          Same here, also describe expire policy? TODO what about not_exist? Also channels
-  //          Also, describe how whole flow works.
 
   // get all events updated <= seconds ago
   const BUFFER_IN_SECONDS = 10
@@ -123,7 +115,7 @@ server.listen({ port: 3031 }, (error, address) => {
   }
 
   setServerAddress(address)
-  logger.info("Server listening at ", address)
+  logger.info(`Server listening at ${address}`)
 })
 
 server.addHook("onClose", async () => {

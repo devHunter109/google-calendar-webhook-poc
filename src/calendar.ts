@@ -20,6 +20,7 @@ export const registerWebhook = async (
 
   const webhookId = crypto.randomUUID()
 
+  // POST "https://www.googleapis.com/calendar/v3/calendars/primary/events/watch"
   const response = await calendar.events.watch({
     calendarId: "primary",
     requestBody: {
@@ -30,7 +31,10 @@ export const registerWebhook = async (
     },
   })
 
-  logger.debug(response.data, "Register calendar events webhook")
+  logger.debug(
+    { data: response.data, headers: response.headers, status: response.status },
+    "Register calendar events webhook response",
+  )
 
   WEBHOOKS_REGISTERED.push(webhookId)
 }

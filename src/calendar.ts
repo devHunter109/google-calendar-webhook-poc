@@ -22,11 +22,12 @@ export const registerWebhook = async (
 
   // POST "https://www.googleapis.com/calendar/v3/calendars/primary/events/watch"
   const response = await calendar.events.watch({
-    calendarId: "primary",
+    // calendarId: "primary",
+    calendarId: getConfig().calendarId,
     requestBody: {
       id: webhookId,
       type: "web_hook",
-      address: `${tunnel.url}/webhook`,
+      address: `${getConfig().ngrokUrl}/webhook`,
       token: WEBHOOK_TOKEN,
     },
   })

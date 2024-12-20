@@ -6,7 +6,7 @@ import {
   registerWebhook,
   unsubscribeAllWebhooks,
 } from "./calendar"
-import { addEvents, clearEvents, getEvents } from "./storage"
+import { addEvents, clearEvents, getEvents, updateEvents } from "./storage"
 import { authorizeClient, generateAuthUrl, isOAuthStateMatch } from "./auth"
 
 import fastify from "fastify"
@@ -45,7 +45,8 @@ server.get<{
   await authorizeClient(code)
   await registerWebhook(getCalendarClient())
 
-  return reply.send(200)
+  // return reply.send(200)
+  reply.redirect('/events')
 })
 
 server.post<{
@@ -84,14 +85,15 @@ server.post<{
 
   const calendar = getCalendarClient()
   const updatedEventsResult = await calendar.events.list({
-    calendarId: "primary",
+    // calendarId: "primary",
+    calendarId: process.env["CALENDAR_ID"],
     updatedMin: updatedMinDate.toISOString(),
     maxResults: 10,
     singleEvents: false,
   })
 
   const updatedEvents = updatedEventsResult.data.items || []
-  addEvents(updatedEvents)
+  updateEvents(updatedEvents)
 
   logger.debug(
     {
@@ -108,7 +110,7 @@ server.post<{
 server.get("/events", () => getEvents())
 server.delete("/events", { logLevel: "info" }, () => clearEvents())
 
-server.listen({ port: 3031 }, (error, address) => {
+server.listen({ port: 3000 }, (error, address) => {
   if (error) {
     console.error("Server initialization failed.", error)
     process.exit(1)

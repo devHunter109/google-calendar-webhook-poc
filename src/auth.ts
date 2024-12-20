@@ -6,7 +6,7 @@ const config = getConfig()
 
 const oAuthState = crypto.randomBytes(32).toString("hex")
 
-const redirectUri = "http://localhost:3031/callback"
+const redirectUri = "http://localhost:3000/callback"
 const oAuth2Client = new google.auth.OAuth2(
   config.google.clientId,
   config.google.secret,
@@ -27,9 +27,9 @@ export const isOAuthStateMatch = (state: string): boolean => state === oAuthStat
 
 export const authorizeClient = async (code: string): Promise<void> => {
   const {
-    tokens: { access_token },
+    tokens: { access_token, refresh_token },
   } = await oAuth2Client.getToken(code)
 
-  oAuth2Client.setCredentials({ access_token })
+  oAuth2Client.setCredentials({ access_token, refresh_token })
   google.options({ auth: oAuth2Client })
 }

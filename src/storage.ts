@@ -1,10 +1,11 @@
 import { calendar_v3 as googleCalendarApi } from "googleapis"
+import { getCalendarClient } from "./calendar"
 
 type Event = googleCalendarApi.Schema$Events
 
 type EventAction = {
   timestamp: string
-  events: Event[]
+  events: []
 }
 
 /**
@@ -21,14 +22,52 @@ type EventAction = {
  */
 const EVENTS: EventAction[] = []
 
-export const addEvents = (events: Event[]): Promise<void> => {
-  if (events.length > 0) {
-    const now = new Date()
-    EVENTS.push({
-      timestamp: `${now.toTimeString()} | ${now.toDateString()}`,
-      events,
-    })
+export async function getGoogleBookingDetails(eventId: string) {
+  try {
+    const calendar = getCalendarClient()
+    const response = await calendar.events.get({
+      // calendarId: "primary",
+      calendarId: process.env["CALENDAR_ID"],
+      eventId: eventId,
+    });
+
+    const event = response.data;
+
+    return event;
+  } catch (error) {
+    console.error('Error fetching Google booking details:', error);
+    throw error;
   }
+}
+
+export const updateEvents = async (events: Event[]): Promise<void> => {
+  if (events.length === 0) {
+    return Promise.resolve()
+  }
+
+  const eventDetails = await Promise.all(
+    events.map(async (event: googleCalendarApi.Schema$Event) => {
+      return await getGoogleBookingDetails(event.id as string);
+    })
+  )
+
+  const now = new Date()
+  const processedEvents = eventDetails.map((event: googleCalendarApi.Schema$Event) => {
+    const description = event.description || '';
+    const matches = description.match(/<b>Booked by<\/b>\s*(.*?)\s*([\w.-]+@[\w.-]+\.\w+)/s);
+    
+    return {
+      bookedBy: matches ? {
+        name: matches[1],
+        email: matches[2]
+      } : null
+    };
+  });
+
+  EVENTS.push({
+    timestamp: `${now.toTimeString()} | ${now.toDateString()}`,
+    events: processedEvents as []
+  });
 
   return Promise.resolve()
 }

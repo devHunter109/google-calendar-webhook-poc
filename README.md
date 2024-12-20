@@ -25,12 +25,6 @@ fully locally.
 
 ## How it works?
 
-Check the below video, it contains walk through running example 😊
-
-More details on how it works, and how to run it are in further sections of README.
-
-[![Walk through google-calendar-webhooks-poc - Watch Video](https://cdn.loom.com/sessions/thumbnails/1d14826021e94ca2aceec234cd165246-with-play.gif)](https://www.loom.com/embed/1d14826021e94ca2aceec234cd165246)
-
 ## Specs for Google Calendar Events webhook
 
 [Calendar API docs for push notifications](https://developers.google.com/calendar/api/guides/push)
@@ -106,10 +100,10 @@ headers: {
 App URL which is called by Google if there is a new notification. F.e. example:
 `https://some-origin.example.com/webhook`
 
-This example app uses [localtunnel](https://github.com/localtunnel/localtunnel) to temporarily
-expose localhost by an auto-generated subdomain of loca.lt. Example of webhook callback which was
-registered to Google Calendar API by this app:
-`https://mean-wolves-invent-93-174-30-12.loca.lt/webhook`
+This example app uses [ngrok](https://ngrok.com/) to temporarily expose localhost through a secure tunnel. Example of webhook callback which was registered to Google Calendar API by this app:
+`https://1234-93-174-30-12.ngrok.io/webhook`
+
+Previously, this app used [localtunnel](https://github.com/localtunnel/localtunnel) which exposed localhost via a loca.lt subdomain (e.g. `https://mean-wolves-invent-93-174-30-12.loca.lt/webhook`).
 
 #### Request to `~/webhook` send by Google API
 
@@ -226,10 +220,6 @@ Google Cloud account with the project in it and
    scope there
 1. Add credentials for OAuth client ID, for application type "Web Application"
 1. Store generated credentials
-
-If you're unfamiliar with Google Cloud, check the the video below where it is done step-by-step!
-
-[![Events webhook POC – Google Cloud console - Watch Video](https://cdn.loom.com/sessions/thumbnails/3383b46386dd44868088475072cbca76-with-play.gif)](https://www.loom.com/embed/3383b46386dd44868088475072cbca76)
 
 ### Run the app
 
